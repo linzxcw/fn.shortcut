@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞牛捷径</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(26, 26, 46, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        
+        button {
+            flex: 0 0 45%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #install-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        #restore-btn {
+            background: linear-gradient(45deg, #ff9800, #f57c00);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .logs-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e0e0e0;
+        }
+        
+        .logs-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .logs-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        
+        .logs-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+        
+        .logs-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #b0b0b0;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status-ready {
+            background: #4CAF50;
+        }
+        
+        .status-not-ready {
+            background: #f44336;
+        }
+        
+        /* 全局提醒样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+        }
+        
+        .notification.info {
+            background: linear-gradient(45deg, #2196F3, #0b7dda);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>飞牛捷径</h1>
+        
+        <div class="status-indicator">
+            <div class="status-dot status-not-ready" id="status-dot"></div>
+            <span id="status-text">系统状态: 未就绪</span>
+        </div>
+        
+        <div class="button-container">
+            <button id="install-btn">安装服务</button>
+            <button id="restore-btn">系统还原</button>
+        </div>
+        
+        <div class="logs-container" id="logs"></div>
+    </div>
+    
+    <!-- 全局通知容器 -->
+    <div id="notification" class="notification"></div>
+    
+    <script>
+        // 显示全局通知
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.className = 'notification';
+            }, 3000);
+        }
+        
+        // 初始化SSE连接
+        function initSSE() {
+            const eventSource = new EventSource('/logs/sse');
+            const logsContainer = document.getElementById('logs');
+            
+            eventSource.onmessage = function(event) {
+                // 检查当前是否在滚动条底部
+                const isAtBottom = logsContainer.scrollTop + logsContainer.clientHeight >= logsContainer.scrollHeight - 10; // 10px容差
+                
+                // 追加新日志
+                logsContainer.innerHTML += event.data + '<br>';
+                
+                // 只有当用户当前在查看最新日志时，才自动滚动到底部
+                if (isAtBottom) {
+                    logsContainer.scrollTop = logsContainer.scrollHeight;
+                }
+            };
+            
+            eventSource.onerror = function() {
+                console.error('SSE连接错误');
+                eventSource.close();
+            };
+        }
+        
+        // 更新系统状态
+        function updateStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    const statusDot = document.getElementById('status-dot');
+                    const statusText = document.getElementById('status-text');
+                    
+                    if (data.ready) {
+                        statusDot.className = 'status-dot status-ready';
+                        statusText.textContent = '系统状态: 就绪';
+                    } else {
+                        statusDot.className = 'status-dot status-not-ready';
+                        statusText.textContent = '系统状态: 未就绪';
+                    }
+                });
+        }
+        
+        // 安装服务按钮点击事件
+        document.getElementById('install-btn').addEventListener('click', function() {
+            // 显示开始安装通知
+            showNotification('开始安装服务，请稍候...', 'info');
+            
+            fetch('/install', { method: 'POST' })
+                .then(() => {
+                    // 显示安装请求已接收通知
+                    showNotification('安装服务请求已接收，正在处理...', 'success');
+                    // 安装完成后更新状态
+                    setTimeout(updateStatus, 1000);
+                });
+        });
+        
+        // 系统还原按钮点击事件
+        document.getElementById('restore-btn').addEventListener('click', function() {
+            // 显示开始还原通知
+            showNotification('开始系统还原，请稍候...', 'info');
+            
+            fetch('/restore', { method: 'POST' })
+                .then(() => {
+                    // 显示还原请求已接收通知
+                    showNotification('系统还原请求已接收，正在处理...', 'success');
+                });
+        });
+        
+        // 每10秒更新一次状态
+        setInterval(() => {
+            updateStatus();
+        }, 10000);
+        
+        // 初始加载
+        initSSE();  // 初始化SSE连接
+        updateStatus();  // 初始更新状态
+    </script>
+</body>
+</html>

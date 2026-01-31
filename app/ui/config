@@ -1,0 +1,18 @@
+{
+    ".url": {
+        "fn.shortcut": {
+            "title": "飞牛捷径",
+            "icon": "images/icon_{0}.png",
+            "type": "iframe",
+            "protocol": "",
+            "port": "15778",
+            "allUsers": false,
+            "control": {
+                "accessPerm": "readonly",
+                "portPerm": "readonly", 
+                "pathPerm": "editable"
+            },              
+            "noDisplay": false,
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "fn-shortcut",
+  "version": "1.0.1",
+  "description": "飞牛捷径",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.10"
+  }
+}

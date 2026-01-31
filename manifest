@@ -1,0 +1,13 @@
+appname=fn.shortcut
+version=1.0.0
+desc=此应用可以增强飞牛系统各应用之间的联动和自动化，搭配万能编辑器进行使用<br>• ⚙️例如在文件管理器空白处右击，即可打开万能编辑器，并且编辑器自动切换到对应目录下<br>• ✨ 更多联动捷径等你来发现
+arch=x86_64
+display_name=飞牛捷径
+maintainer=qilinzhu
+maintainer_url=https://space.bilibili.com/351478349?spm_id_from=333.1007.0.0
+distributor=qilinzhu
+distributor_url=https://space.bilibili.com/351478349?spm_id_from=333.1007.0.0
+source=thirdparty
+desktop_uidir=ui
+install_dep_apps=nodejs_v22
+desktop_applaunchname=fn.shortcut
