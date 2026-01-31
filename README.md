@@ -5,4 +5,4 @@
 ## 应用截图
 <img width="1238" height="710" alt="PixPin_2026-01-31_10-17-38" src="https://github.com/user-attachments/assets/246f1970-7b15-4dd0-b21d-87c91ef7a197" />
 
-<p align="center" style="color: #666; font-size: 14px;">应用界面</p>
+<p align="center" style="color: #888585ff; font-size: 14px;">应用界面</p>
