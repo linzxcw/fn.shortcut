@@ -1,4 +1,7 @@
 # 飞牛捷径
+
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+
 此应用可以增强飞牛系统各应用之间的联动和自动化，搭配万能编辑器进行使用
 - ⚙️例如在文件管理器空白处右击，即可打开万能编辑器，并且编辑器自动切换到对应目录下
 - ✨ 更多联动捷径等你来发现
