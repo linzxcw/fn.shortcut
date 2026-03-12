@@ -545,6 +545,11 @@
             
             // 将当前窗口的z-index设置为比最大的大1
             windowElement.style.zIndex = maxZIndex + 1;
+            
+            // 更新任务栏图标状态（显示蓝色边框）
+            if (windowElement._taskbarIcon) {
+                windowElement._taskbarIcon.classList.add('bg-white-10', '!border-focus-border');
+            }
         }
         
         // 添加点击事件，实现窗口置顶（监听整个窗口元素，包括iframe内部）
@@ -590,6 +595,11 @@
                     
                     // 将万能编辑器窗口的z-index设置为比最大的两位数大1
                     windowElement.style.zIndex = maxTwoDigitZIndex + 1;
+                    
+                    // 更新任务栏图标状态（移除蓝色边框）
+                    if (windowElement._taskbarIcon) {
+                        windowElement._taskbarIcon.classList.remove('bg-white-10', '!border-focus-border');
+                    }
                 }
             });
         }
@@ -598,6 +608,11 @@
         windowElement.addEventListener('remove', () => {
             if (document.head.contains(style)) {
                 document.head.removeChild(style);
+            }
+            // 删除任务栏图标
+            if (windowElement._taskbarIcon) {
+                windowElement._taskbarIcon.remove();
+                windowElement._taskbarIcon = null;
             }
         });
     };
@@ -609,6 +624,11 @@
         if (closeBtn) {
             // 鼠标点击
             closeBtn.addEventListener('click', () => {
+                // 删除任务栏图标
+                if (windowElement._taskbarIcon) {
+                    windowElement._taskbarIcon.remove();
+                    windowElement._taskbarIcon = null;
+                }
                 windowElement.remove();
             });
             // 触摸点击
@@ -622,6 +642,11 @@
                 
                 // 延迟关闭，让用户看到反馈
                 setTimeout(() => {
+                    // 删除任务栏图标
+                    if (windowElement._taskbarIcon) {
+                        windowElement._taskbarIcon.remove();
+                        windowElement._taskbarIcon = null;
+                    }
                     windowElement.remove();
                 }, 100);
             });
