@@ -754,19 +754,21 @@
                 </div>
             `;
             
-            // 查找任务栏并添加图标 - 按打开顺序插入到最后一个应用图标之后
+            // 查找任务栏并添加图标 - 固定插入到文件管理器图标之后
+            const fileManagerIcon = taskbarContainer.querySelector('[alt="文件管理"]');
             const settingIcon = taskbarContainer.querySelector('[data-popupid="1bo41o2"]');
-            if (settingIcon && settingIcon.parentElement) {
-                // 获取设置图标的父元素（应用图标容器）
+            
+            if (fileManagerIcon && fileManagerIcon.closest('.flex.h-10')) {
+                // 找到文件管理器图标容器
+                const fileManagerWrapper = fileManagerIcon.closest('.flex.h-10');
+                // 插入到文件管理器图标之后
+                fileManagerWrapper.after(taskbarIcon);
+            } else if (settingIcon && settingIcon.closest('.flex.h-10')) {
+                // 如果找不到文件管理器图标，插入到设置图标之前
                 const settingWrapper = settingIcon.closest('.flex.h-10');
-                if (settingWrapper && settingWrapper.previousElementSibling) {
-                    // 插入到设置图标之后
-                    settingWrapper.after(taskbarIcon);
-                } else {
-                    // 如果找不到设置图标，按默认方式添加
-                    taskbarContainer.appendChild(taskbarIcon);
-                }
+                settingWrapper.before(taskbarIcon);
             } else {
+                // 如果都找不到，按默认方式添加
                 taskbarContainer.appendChild(taskbarIcon);
             }
             
