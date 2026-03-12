@@ -670,6 +670,10 @@
                     windowElement.style.display = '';
                     windowElement.style.opacity = '1';
                     windowElement.style.transform = 'scale(1)';
+                    // 恢复显示时添加蓝色边框
+                    if (windowElement._taskbarIcon) {
+                        windowElement._taskbarIcon.classList.add('bg-white-10', '!border-focus-border');
+                    }
                 } else {
                     // 保存当前尺寸位置
                     originalRect = {
@@ -684,10 +688,11 @@
                     setTimeout(() => {
                         windowElement.style.display = 'none';
                     }, 200);
+                    // 最小化时取消蓝色边框
+                    if (windowElement._taskbarIcon) {
+                        windowElement._taskbarIcon.classList.remove('bg-white-10', '!border-focus-border');
+                    }
                 }
-                
-                // 更新任务栏图标状态
-                updateTaskbarIconState(windowElement, windowElement.style.display !== 'none');
             });
             
             // 触摸点击
@@ -705,6 +710,10 @@
                         windowElement.style.display = '';
                         windowElement.style.opacity = '1';
                         windowElement.style.transform = 'scale(1)';
+                        // 恢复显示时添加蓝色边框
+                        if (windowElement._taskbarIcon) {
+                            windowElement._taskbarIcon.classList.add('bg-white-10', '!border-focus-border');
+                        }
                     } else {
                         // 保存当前尺寸位置
                         originalRect = {
@@ -719,10 +728,11 @@
                         setTimeout(() => {
                             windowElement.style.display = 'none';
                         }, 200);
+                        // 最小化时取消蓝色边框
+                        if (windowElement._taskbarIcon) {
+                            windowElement._taskbarIcon.classList.remove('bg-white-10', '!border-focus-border');
+                        }
                     }
-                    
-                    // 更新任务栏图标状态
-                    updateTaskbarIconState(windowElement, windowElement.style.display !== 'none');
                 }, 100);
             });
         }
