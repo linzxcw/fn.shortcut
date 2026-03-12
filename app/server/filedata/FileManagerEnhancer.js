@@ -630,15 +630,41 @@
         // 最小化按钮功能
         const minimizeBtn = windowElement.querySelector('.app-layout-header-minimize');
         if (minimizeBtn) {
+            // 保存原始窗口位置和尺寸
+            let originalRect = {
+                left: windowElement.style.left,
+                top: windowElement.style.top,
+                width: windowElement.style.width,
+                height: windowElement.style.height
+            };
+            
             // 鼠标点击
             minimizeBtn.addEventListener('click', () => {
-                // 简单的隐藏效果
-                windowElement.style.transform = 'scale(0.8)';
-                windowElement.style.opacity = '0';
-                setTimeout(() => {
-                    windowElement.style.display = 'none';
-                }, 200);
+                if (windowElement.style.display === 'none') {
+                    // 恢复显示
+                    windowElement.style.display = '';
+                    windowElement.style.opacity = '1';
+                    windowElement.style.transform = 'scale(1)';
+                } else {
+                    // 保存当前尺寸位置
+                    originalRect = {
+                        left: windowElement.style.left,
+                        top: windowElement.style.top,
+                        width: windowElement.style.width,
+                        height: windowElement.style.height
+                    };
+                    // 最小化隐藏
+                    windowElement.style.transform = 'scale(0.8)';
+                    windowElement.style.opacity = '0';
+                    setTimeout(() => {
+                        windowElement.style.display = 'none';
+                    }, 200);
+                }
+                
+                // 更新任务栏图标状态
+                updateTaskbarIconState(windowElement, windowElement.style.display !== 'none');
             });
+            
             // 触摸点击
             minimizeBtn.addEventListener('touchstart', (e) => {
                 e.preventDefault();
@@ -649,14 +675,99 @@
                 
                 // 延迟执行，让用户看到反馈
                 setTimeout(() => {
-                    // 简单的隐藏效果
+                    if (windowElement.style.display === 'none') {
+                        // 恢复显示
+                        windowElement.style.display = '';
+                        windowElement.style.opacity = '1';
+                        windowElement.style.transform = 'scale(1)';
+                    } else {
+                        // 保存当前尺寸位置
+                        originalRect = {
+                            left: windowElement.style.left,
+                            top: windowElement.style.top,
+                            width: windowElement.style.width,
+                            height: windowElement.style.height
+                        };
+                        // 最小化隐藏
+                        windowElement.style.transform = 'scale(0.8)';
+                        windowElement.style.opacity = '0';
+                        setTimeout(() => {
+                            windowElement.style.display = 'none';
+                        }, 200);
+                    }
+                    
+                    // 更新任务栏图标状态
+                    updateTaskbarIconState(windowElement, windowElement.style.display !== 'none');
+                }, 100);
+            });
+        }
+        
+        // 查找任务栏并添加图标
+        const taskbarContainer = document.querySelector('.scrollbar-hidden.absolute.inset-0.flex.flex-col.items-end.justify-start.gap-2');
+        if (taskbarContainer) {
+            // 创建任务栏图标
+            const taskbarIcon = document.createElement('div');
+            taskbarIcon.className = 'flex h-10 w-[47px] items-center justify-center gap-x-2 border-0 !border-l-[3px] border-solid border-transparent hover:bg-white-10 taskbar-icon';
+            taskbarIcon.dataset.windowId = 'window-' + Date.now();
+            taskbarIcon.innerHTML = `
+                <div class="flex h-9 shrink-0 flex-row items-center px-[3px] py-super-tight" tabindex="0">
+                    <div class="box-border size-[80px] p-[15%] !h-[36px] !w-[36px]">
+                        <div class="semi-image size-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" style="color: #4299e1;">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zM8 17h8v-2H8v2zm0-4h8v-2H8v2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 插入到设置图标之前
+            const settingIcon = taskbarContainer.querySelector('[data-popupid="1bo41o2"]');
+            if (settingIcon && settingIcon.parentElement) {
+                settingIcon.parentElement.parentElement.parentElement.before(taskbarIcon);
+            } else {
+                taskbarContainer.appendChild(taskbarIcon);
+            }
+            
+            // 点击任务栏图标显示/隐藏窗口
+            taskbarIcon.addEventListener('click', () => {
+                if (windowElement.style.display === 'none') {
+                    // 恢复显示
+                    windowElement.style.display = '';
+                    windowElement.style.opacity = '1';
+                    windowElement.style.transform = 'scale(1)';
+                    updateTaskbarIconState(windowElement, true);
+                } else {
+                    // 隐藏窗口
+                    originalRect = {
+                        left: windowElement.style.left,
+                        top: windowElement.style.top,
+                        width: windowElement.style.width,
+                        height: windowElement.style.height
+                    };
                     windowElement.style.transform = 'scale(0.8)';
                     windowElement.style.opacity = '0';
                     setTimeout(() => {
                         windowElement.style.display = 'none';
                     }, 200);
-                }, 100);
+                    updateTaskbarIconState(windowElement, false);
+                }
             });
+            
+            // 存储任务栏图标引用
+            windowElement._taskbarIcon = taskbarIcon;
+        }
+        
+        // 更新任务栏图标状态函数
+        function updateTaskbarIconState(win, isActive) {
+            const icon = win._taskbarIcon;
+            if (icon) {
+                if (isActive) {
+                    icon.classList.add('bg-white-10', '!border-focus-border');
+                } else {
+                    icon.classList.remove('bg-white-10', '!border-focus-border');
+                }
+            }
         }
         
         // 最大化按钮功能
