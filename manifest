@@ -1,5 +1,5 @@
 appname=fn.shortcut
-version=1.0.0
+version=1.0.1
 desc=此应用可以增强飞牛系统各应用之间的联动和自动化，搭配万能编辑器进行使用<br>• ⚙️例如在文件管理器空白处右击，即可打开万能编辑器，并且编辑器自动切换到对应目录下<br>• ✨ 更多联动捷径等你来发现
 arch=x86_64
 display_name=飞牛捷径
@@ -11,3 +11,4 @@ source=thirdparty
 desktop_uidir=ui
 install_dep_apps=nodejs_v22
 desktop_applaunchname=fn.shortcut
+changelog=`<div>1.解决窗口置顶问题</div><div>2.解决右键菜单点击后还存在的问题</div><div>3.窗口最小化直接关闭的问题，兼容飞牛的任务栏</div><div>4.优化手机端触摸体验</div>`
