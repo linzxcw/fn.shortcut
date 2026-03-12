@@ -607,7 +607,14 @@
         // 关闭按钮功能
         const closeBtn = windowElement.querySelector('.app-layout-header-close');
         if (closeBtn) {
+            // 鼠标点击
             closeBtn.addEventListener('click', () => {
+                windowElement.remove();
+            });
+            // 触摸点击
+            closeBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 windowElement.remove();
             });
         }
@@ -615,7 +622,19 @@
         // 最小化按钮功能
         const minimizeBtn = windowElement.querySelector('.app-layout-header-minimize');
         if (minimizeBtn) {
+            // 鼠标点击
             minimizeBtn.addEventListener('click', () => {
+                // 简单的隐藏效果
+                windowElement.style.transform = 'scale(0.8)';
+                windowElement.style.opacity = '0';
+                setTimeout(() => {
+                    windowElement.style.display = 'none';
+                }, 200);
+            });
+            // 触摸点击
+            minimizeBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 // 简单的隐藏效果
                 windowElement.style.transform = 'scale(0.8)';
                 windowElement.style.opacity = '0';
@@ -631,7 +650,40 @@
             let isMaximized = false;
             let originalRect = {};
             
+            // 鼠标点击
             maximizeBtn.addEventListener('click', () => {
+                if (!isMaximized) {
+                    // 保存原始尺寸和位置
+                    originalRect = {
+                        left: windowElement.style.left,
+                        top: windowElement.style.top,
+                        width: windowElement.style.width,
+                        height: windowElement.style.height
+                    };
+                    
+                    // 最大化
+                    windowElement.style.left = '0px';
+                    windowElement.style.top = '0px';
+                    windowElement.style.width = '100vw';
+                    windowElement.style.height = '100vh';
+                    windowElement.style.borderRadius = '0px';
+                    
+                    isMaximized = true;
+                } else {
+                    // 恢复原始尺寸
+                    windowElement.style.left = originalRect.left;
+                    windowElement.style.top = originalRect.top;
+                    windowElement.style.width = originalRect.width;
+                    windowElement.style.height = originalRect.height;
+                    windowElement.style.borderRadius = '16px';
+                    
+                    isMaximized = false;
+                }
+            });
+            // 触摸点击
+            maximizeBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (!isMaximized) {
                     // 保存原始尺寸和位置
                     originalRect = {
