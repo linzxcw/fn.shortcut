@@ -547,7 +547,7 @@
             windowElement.style.zIndex = maxZIndex + 1;
             
             // 隐藏所有任务栏图标的蓝色边框
-            const allTaskbarIcons = document.querySelectorAll('.flex.h-10.w-[47px]');
+            const allTaskbarIcons = document.querySelectorAll('.flex.h-10');
             allTaskbarIcons.forEach(icon => {
                 icon.classList.remove('bg-white-10', '!border-focus-border');
             });
@@ -677,7 +677,7 @@
                     windowElement.style.opacity = '1';
                     windowElement.style.transform = 'scale(1)';
                     // 隐藏所有任务栏图标的蓝色边框
-                    const allTaskbarIcons = document.querySelectorAll('.flex.h-10.w-[47px]');
+                    const allTaskbarIcons = document.querySelectorAll('.flex.h-10');
                     allTaskbarIcons.forEach(icon => {
                         icon.classList.remove('bg-white-10', '!border-focus-border');
                     });
@@ -722,7 +722,7 @@
                         windowElement.style.opacity = '1';
                         windowElement.style.transform = 'scale(1)';
                         // 隐藏所有任务栏图标的蓝色边框
-                        const allTaskbarIcons = document.querySelectorAll('.flex.h-10.w-[47px]');
+                        const allTaskbarIcons = document.querySelectorAll('.flex.h-10');
                         allTaskbarIcons.forEach(icon => {
                             icon.classList.remove('bg-white-10', '!border-focus-border');
                         });
@@ -797,7 +797,7 @@
                     windowElement.style.transform = 'scale(1)';
                     
                     // 隐藏所有任务栏图标的蓝色边框
-                    const allTaskbarIcons = document.querySelectorAll('.flex.h-10.w-[47px]');
+                    const allTaskbarIcons = document.querySelectorAll('.flex.h-10');
                     allTaskbarIcons.forEach(icon => {
                         icon.classList.remove('bg-white-10', '!border-focus-border');
                     });
