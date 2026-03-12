@@ -677,19 +677,47 @@
             let isDragging = false;
             let startX, startY, startLeft, startTop;
             
+            // 鼠标事件
             header.addEventListener('mousedown', (e) => {
+                // 阻止事件冒泡，避免触发其他元素的事件
+                e.stopPropagation();
                 isDragging = true;
                 startX = e.clientX;
                 startY = e.clientY;
                 startLeft = parseInt(windowElement.style.left) || 0;
                 startTop = parseInt(windowElement.style.top) || 0;
                 
-                document.addEventListener('mousemove', handleMouseMove);
-                document.addEventListener('mouseup', handleMouseUp);
+                // 使用捕获阶段来确保事件被正确捕获
+                document.addEventListener('mousemove', handleMouseMove, true);
+                document.addEventListener('mouseup', handleMouseUp, true);
+                
+                // 防止文本选择
+                document.body.style.userSelect = 'none';
+            });
+            
+            // 触摸事件支持（移动端）
+            header.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+                isDragging = true;
+                const touch = e.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                startLeft = parseInt(windowElement.style.left) || 0;
+                startTop = parseInt(windowElement.style.top) || 0;
+                
+                document.addEventListener('touchmove', handleTouchMove, true);
+                document.addEventListener('touchend', handleTouchEnd, true);
+                
+                // 防止页面滚动
+                e.preventDefault();
+                document.body.style.userSelect = 'none';
             });
             
             const handleMouseMove = (e) => {
                 if (!isDragging) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
                 
                 const deltaX = e.clientX - startX;
                 const deltaY = e.clientY - startY;
@@ -698,10 +726,32 @@
                 windowElement.style.top = (startTop + deltaY) + 'px';
             };
             
+            const handleTouchMove = (e) => {
+                if (!isDragging) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - startX;
+                const deltaY = touch.clientY - startY;
+                
+                windowElement.style.left = (startLeft + deltaX) + 'px';
+                windowElement.style.top = (startTop + deltaY) + 'px';
+            };
+            
             const handleMouseUp = () => {
                 isDragging = false;
-                document.removeEventListener('mousemove', handleMouseMove);
-                document.removeEventListener('mouseup', handleMouseUp);
+                document.removeEventListener('mousemove', handleMouseMove, true);
+                document.removeEventListener('mouseup', handleMouseUp, true);
+                document.body.style.userSelect = '';
+            };
+            
+            const handleTouchEnd = () => {
+                isDragging = false;
+                document.removeEventListener('touchmove', handleTouchMove, true);
+                document.removeEventListener('touchend', handleTouchEnd, true);
+                document.body.style.userSelect = '';
             };
         }
     };
