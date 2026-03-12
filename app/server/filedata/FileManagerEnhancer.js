@@ -546,7 +546,13 @@
             // 将当前窗口的z-index设置为比最大的大1
             windowElement.style.zIndex = maxZIndex + 1;
             
-            // 更新任务栏图标状态（显示蓝色边框）
+            // 隐藏所有任务栏图标的蓝色边框
+            const allTaskbarIcons = document.querySelectorAll('.flex.h-10.w-[47px]');
+            allTaskbarIcons.forEach(icon => {
+                icon.classList.remove('bg-white-10', '!border-focus-border');
+            });
+            
+            // 只给当前窗口的任务栏图标添加蓝色边框
             if (windowElement._taskbarIcon) {
                 windowElement._taskbarIcon.classList.add('bg-white-10', '!border-focus-border');
             }
@@ -670,7 +676,12 @@
                     windowElement.style.display = '';
                     windowElement.style.opacity = '1';
                     windowElement.style.transform = 'scale(1)';
-                    // 恢复显示时添加蓝色边框
+                    // 隐藏所有任务栏图标的蓝色边框
+                    const allTaskbarIcons = document.querySelectorAll('.flex.h-10.w-[47px]');
+                    allTaskbarIcons.forEach(icon => {
+                        icon.classList.remove('bg-white-10', '!border-focus-border');
+                    });
+                    // 只给当前窗口的任务栏图标添加蓝色边框
                     if (windowElement._taskbarIcon) {
                         windowElement._taskbarIcon.classList.add('bg-white-10', '!border-focus-border');
                     }
@@ -710,7 +721,12 @@
                         windowElement.style.display = '';
                         windowElement.style.opacity = '1';
                         windowElement.style.transform = 'scale(1)';
-                        // 恢复显示时添加蓝色边框
+                        // 隐藏所有任务栏图标的蓝色边框
+                        const allTaskbarIcons = document.querySelectorAll('.flex.h-10.w-[47px]');
+                        allTaskbarIcons.forEach(icon => {
+                            icon.classList.remove('bg-white-10', '!border-focus-border');
+                        });
+                        // 只给当前窗口的任务栏图标添加蓝色边框
                         if (windowElement._taskbarIcon) {
                             windowElement._taskbarIcon.classList.add('bg-white-10', '!border-focus-border');
                         }
@@ -779,7 +795,17 @@
                     windowElement.style.display = '';
                     windowElement.style.opacity = '1';
                     windowElement.style.transform = 'scale(1)';
-                    updateTaskbarIconState(windowElement, true);
+                    
+                    // 隐藏所有任务栏图标的蓝色边框
+                    const allTaskbarIcons = document.querySelectorAll('.flex.h-10.w-[47px]');
+                    allTaskbarIcons.forEach(icon => {
+                        icon.classList.remove('bg-white-10', '!border-focus-border');
+                    });
+                    
+                    // 只给当前窗口的任务栏图标添加蓝色边框
+                    if (windowElement._taskbarIcon) {
+                        windowElement._taskbarIcon.classList.add('bg-white-10', '!border-focus-border');
+                    }
                 } else {
                     // 隐藏窗口
                     originalRect = {
@@ -793,7 +819,10 @@
                     setTimeout(() => {
                         windowElement.style.display = 'none';
                     }, 200);
-                    updateTaskbarIconState(windowElement, false);
+                    // 最小化时取消蓝色边框
+                    if (windowElement._taskbarIcon) {
+                        windowElement._taskbarIcon.classList.remove('bg-white-10', '!border-focus-border');
+                    }
                 }
             });
             
