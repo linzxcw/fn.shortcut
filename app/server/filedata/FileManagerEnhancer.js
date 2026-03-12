@@ -754,10 +754,18 @@
                 </div>
             `;
             
-            // 插入到设置图标之前
+            // 查找任务栏并添加图标 - 按打开顺序插入到最后一个应用图标之后
             const settingIcon = taskbarContainer.querySelector('[data-popupid="1bo41o2"]');
             if (settingIcon && settingIcon.parentElement) {
-                settingIcon.parentElement.parentElement.parentElement.before(taskbarIcon);
+                // 获取设置图标的父元素（应用图标容器）
+                const settingWrapper = settingIcon.closest('.flex.h-10');
+                if (settingWrapper && settingWrapper.previousElementSibling) {
+                    // 插入到设置图标之后
+                    settingWrapper.after(taskbarIcon);
+                } else {
+                    // 如果找不到设置图标，按默认方式添加
+                    taskbarContainer.appendChild(taskbarIcon);
+                }
             } else {
                 taskbarContainer.appendChild(taskbarIcon);
             }
