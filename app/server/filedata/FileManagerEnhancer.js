@@ -615,7 +615,15 @@
             closeBtn.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                windowElement.remove();
+                
+                // 添加触摸反馈
+                closeBtn.style.background = '#dc2626';
+                closeBtn.style.color = 'white';
+                
+                // 延迟关闭，让用户看到反馈
+                setTimeout(() => {
+                    windowElement.remove();
+                }, 100);
             });
         }
         
@@ -635,12 +643,19 @@
             minimizeBtn.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // 简单的隐藏效果
-                windowElement.style.transform = 'scale(0.8)';
-                windowElement.style.opacity = '0';
+                
+                // 添加触摸反馈
+                minimizeBtn.style.background = 'var(--semi-color-fill-0)';
+                
+                // 延迟执行，让用户看到反馈
                 setTimeout(() => {
-                    windowElement.style.display = 'none';
-                }, 200);
+                    // 简单的隐藏效果
+                    windowElement.style.transform = 'scale(0.8)';
+                    windowElement.style.opacity = '0';
+                    setTimeout(() => {
+                        windowElement.style.display = 'none';
+                    }, 200);
+                }, 100);
             });
         }
         
@@ -684,33 +699,40 @@
             maximizeBtn.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (!isMaximized) {
-                    // 保存原始尺寸和位置
-                    originalRect = {
-                        left: windowElement.style.left,
-                        top: windowElement.style.top,
-                        width: windowElement.style.width,
-                        height: windowElement.style.height
-                    };
-                    
-                    // 最大化
-                    windowElement.style.left = '0px';
-                    windowElement.style.top = '0px';
-                    windowElement.style.width = '100vw';
-                    windowElement.style.height = '100vh';
-                    windowElement.style.borderRadius = '0px';
-                    
-                    isMaximized = true;
-                } else {
-                    // 恢复原始尺寸
-                    windowElement.style.left = originalRect.left;
-                    windowElement.style.top = originalRect.top;
-                    windowElement.style.width = originalRect.width;
-                    windowElement.style.height = originalRect.height;
-                    windowElement.style.borderRadius = '16px';
-                    
-                    isMaximized = false;
-                }
+                
+                // 添加触摸反馈
+                maximizeBtn.style.background = 'var(--semi-color-fill-0)';
+                
+                // 延迟执行，让用户看到反馈
+                setTimeout(() => {
+                    if (!isMaximized) {
+                        // 保存原始尺寸和位置
+                        originalRect = {
+                            left: windowElement.style.left,
+                            top: windowElement.style.top,
+                            width: windowElement.style.width,
+                            height: windowElement.style.height
+                        };
+                        
+                        // 最大化
+                        windowElement.style.left = '0px';
+                        windowElement.style.top = '0px';
+                        windowElement.style.width = '100vw';
+                        windowElement.style.height = '100vh';
+                        windowElement.style.borderRadius = '0px';
+                        
+                        isMaximized = true;
+                    } else {
+                        // 恢复原始尺寸
+                        windowElement.style.left = originalRect.left;
+                        windowElement.style.top = originalRect.top;
+                        windowElement.style.width = originalRect.width;
+                        windowElement.style.height = originalRect.height;
+                        windowElement.style.borderRadius = '16px';
+                        
+                        isMaximized = false;
+                    }
+                }, 100);
             });
         }
         
