@@ -376,7 +376,7 @@
             width: 1100px;
             height: 665px;
             border-radius: 16px;
-            z-index: 10011;
+            z-index: 10010;
             left: 181px;
             top: 128.5px;
             position: fixed;
@@ -516,10 +516,83 @@
         `;
         
         document.head.appendChild(style);
-        document.body.appendChild(windowElement);
+        
+        // 查找桌面元素，将窗口添加到桌面元素内
+        const desktopElement = document.querySelector('.desktop');
+        if (desktopElement) {
+            desktopElement.appendChild(windowElement);
+        } else {
+            // 如果找不到桌面元素，回退到添加到 body
+            document.body.appendChild(windowElement);
+        }
         
         // 添加窗口控制功能
         this.addWindowControls(windowElement);
+        
+        // 窗口点击事件处理函数
+        function handleWindowClick() {
+            // 查找所有桌面窗口（包括万能编辑器和其他系统窗口）
+            const desktopWindows = document.querySelectorAll('.desktop .trim-ui__app-layout--window, .desktop [class*="window"]');
+            
+            // 找到当前最大的z-index值（与系统窗口保持一致，从10010开始）
+            let maxZIndex = 10010;
+            desktopWindows.forEach(win => {
+                const zIndex = parseInt(win.style.zIndex) || 10010;
+                if (zIndex > maxZIndex) {
+                    maxZIndex = zIndex;
+                }
+            });
+            
+            // 将当前窗口的z-index设置为比最大的大1
+            windowElement.style.zIndex = maxZIndex + 1;
+        }
+        
+        // 添加点击事件，实现窗口置顶（监听整个窗口元素，包括iframe内部）
+        windowElement.addEventListener('mousedown', handleWindowClick, true);
+        
+        // 监听iframe的点击事件
+        const iframe = windowElement.querySelector('iframe');
+        if (iframe) {
+            // 尝试在iframe加载完成后添加点击事件
+            iframe.onload = function() {
+                // 第一次打开时，设置z-index为最大值，确保置顶
+                handleWindowClick();
+                
+                try {
+                    // 只有当iframe和主页面同源时才能访问其内容
+                    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDocument.addEventListener('mousedown', handleWindowClick);
+                } catch (e) {
+                    // 跨域iframe无法访问，忽略错误
+                }
+            };
+        } else {
+            // 如果没有iframe，直接设置z-index为最大值
+            handleWindowClick();
+        }
+        
+        // 监听桌面元素中的点击事件，当其他窗口被点击时，确保万能编辑器窗口的z-index正确
+        if (desktopElement) {
+            desktopElement.addEventListener('mousedown', function(e) {
+                // 检查点击的是否是其他窗口
+                const clickedWindow = e.target.closest('.trim-ui__app-layout--window, .desktop-window, [class*="window"]');
+                if (clickedWindow && clickedWindow !== windowElement) {
+                    // 其他窗口被点击，将万能编辑器窗口的z-index设置为两位数
+                    // 找到当前最大的两位数z-index
+                    let maxTwoDigitZIndex = 10;
+                    const desktopWindows = document.querySelectorAll('.desktop .trim-ui__app-layout--window, .desktop [class*="window"]');
+                    desktopWindows.forEach(win => {
+                        const zIndex = parseInt(win.style.zIndex) || 10;
+                        if (zIndex >= 10 && zIndex < 100 && zIndex > maxTwoDigitZIndex) {
+                            maxTwoDigitZIndex = zIndex;
+                        }
+                    });
+                    
+                    // 将万能编辑器窗口的z-index设置为比最大的两位数大1
+                    windowElement.style.zIndex = maxTwoDigitZIndex + 1;
+                }
+            });
+        }
         
         // 自动清理样式
         windowElement.addEventListener('remove', () => {
@@ -717,6 +790,24 @@
 
         // 添加点击事件
         newItem.addEventListener('click', (e) => {
+            // 阻止事件冒泡，避免触发系统默认行为
+            e.stopPropagation();
+            e.preventDefault();
+            
+            // 关闭右键菜单
+            const menu = document.querySelector('.base-Popper-root');
+            if (menu) {
+                // 模拟点击菜单外部来关闭菜单
+                const clickEvent = new MouseEvent('click', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window,
+                    clientX: 0,
+                    clientY: 0
+                });
+                document.body.dispatchEvent(clickEvent);
+            }
+            
             const baseUrl = this.getBaseServerUrl();
             const apiPath = '/cgi/ThirdParty/all.editor/index.cgi';
             let previewUrl = `${baseUrl}${apiPath}`;
@@ -738,7 +829,7 @@
                 previewUrl += `?floderpath=/${encodeURIComponent(fullPath)}`;
             }
 
-            // 延迟执行，避免与菜单关闭冲突
+            // 延迟执行，让菜单先关闭
             setTimeout(() => {
                 this.openOriginalTextPreview(previewUrl, filename, fullPath);
             }, 100);
