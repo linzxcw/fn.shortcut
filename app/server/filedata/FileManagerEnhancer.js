@@ -710,12 +710,10 @@
             taskbarIcon.className = 'flex h-10 w-[47px] items-center justify-center gap-x-2 border-0 !border-l-[3px] border-solid border-transparent hover:bg-white-10 taskbar-icon';
             taskbarIcon.dataset.windowId = 'window-' + Date.now();
             taskbarIcon.innerHTML = `
-                <div class="flex h-9 shrink-0 flex-row items-center px-[3px] py-super-tight" tabindex="0">
+                <div class="flex h-9 shrink-0 flex-row items-center px-[3px] py-super-tight" tabindex="0" aria-describedby="qsueowf" data-popupid="qsueowf">
                     <div class="box-border size-[80px] p-[15%] !h-[36px] !w-[36px]">
                         <div class="semi-image size-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" style="color: #4299e1;">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zM8 17h8v-2H8v2zm0-4h8v-2H8v2z"/>
-                            </svg>
+                            <img src="/app-center-static/serviceicon/all.editor/ui/images/icon_{0}.png?size=256" data-src="/app-center-static/serviceicon/all.editor/ui/images/icon_{0}.png?size=256" alt="万能编辑器" class="semi-image-img w-full h-full !rounded-[10%]" style="user-select: none; pointer-events: none;">
                         </div>
                     </div>
                 </div>
